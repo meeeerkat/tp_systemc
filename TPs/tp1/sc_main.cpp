@@ -20,11 +20,11 @@ int sc_main(int argc, char **argv) {
 	*/
 
 	Generator gen("Generator1");
-  Memory mem("Memory");
+  Memory mem("Memory", 0x100);
 	Bus bus("Bus");
 
   /* port mapping */
-	bus.map(mem.socket, 0x10000000, 0x100000FF);
+	bus.map(mem.socket, 0x10000000, 0x100000FF+1);
 
 	/* connect components to the bus */
 	gen.socket.bind(bus.target);

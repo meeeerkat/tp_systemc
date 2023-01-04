@@ -9,9 +9,8 @@ void Generator::thread(void) {
   for (ensitlm::addr_t i=0; i < 10; i++)
 		socket.write(addr+4*i, val);
 
+	socket.write(addr+2, val);
 	socket.write(3*addr, val);
-
-  //while(true) cin >> val;
 }
 
 Generator::Generator(sc_core::sc_module_name name) : sc_core::sc_module(name) {
