@@ -4,16 +4,14 @@
 using namespace std;
 
 void Generator::thread(void) {
-	ensitlm::data_t val = 1;
-	ensitlm::addr_t addr = 4;
-	while (true) {
-		cout << "Entrer un nombre" << endl;
-		cin >> val;
-		cout << "Entrer une adresse" << endl;
-		cin >> addr;
-		cout << "je vais envoyer : " << std::dec << val << " a l'addresse " << std::dec << addr << endl;
-		socket.write(addr, val);
-	}
+	ensitlm::data_t val = 10;
+	ensitlm::addr_t addr = 0x10000000;
+  for (ensitlm::addr_t i=0; i < 10; i++)
+		socket.write(addr+4*i, val);
+
+	socket.write(3*addr, val);
+
+  //while(true) cin >> val;
 }
 
 Generator::Generator(sc_core::sc_module_name name) : sc_core::sc_module(name) {

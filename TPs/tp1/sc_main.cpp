@@ -14,7 +14,7 @@ int sc_main(int argc, char **argv) {
 	/*
 	  +---------+	 +-------------+    +--------+
 	  |	   +++	+-+	      +++  +++	     |
-	  | Alice  | +--+ |  Router   | +--+ |	Bob  |
+	  | Gen   | +--+ |  Bus   | +--+ |	Mem |
 	  |	   +++	+-+	      +++  +++	     |
 	  +---------+	 +-------------+    +--------+
 	*/
@@ -24,7 +24,7 @@ int sc_main(int argc, char **argv) {
 	Bus bus("Bus");
 
   /* port mapping */
-	bus.map(mem.socket, 0x10000000, 0x100000FF+1);
+	bus.map(mem.socket, 0x10000000, 0x100000FF);
 
 	/* connect components to the bus */
 	gen.socket.bind(bus.target);
