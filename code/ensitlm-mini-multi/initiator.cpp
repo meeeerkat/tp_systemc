@@ -13,7 +13,9 @@ void initiator::thread(void) {
 	while (true) {
 		cout << "Entrer un nombre" << endl;
 		cin >> val;
-		cout << "je vais envoyer : " << std::dec << val << endl;
+		cout << "Entrer une adresse" << endl;
+		cin >> addr;
+		cout << "je vais envoyer : " << std::dec << val << " a l'addresse " << std::dec << addr << endl;
 		socket.write(addr, val);
 	}
 }
