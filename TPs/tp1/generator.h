@@ -8,6 +8,8 @@
 
 struct Generator : sc_core::sc_module {
 	ensitlm::initiator_socket<Generator> socket;
+	sc_core::sc_in<bool> get_intr;
+
 	void thread(void);
 
 	SC_CTOR(Generator);

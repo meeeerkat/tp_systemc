@@ -7,6 +7,7 @@
 #include "generator.h"
 #include "memory.h"
 #include "bus.h"
+#include "LCDC.h"
 
 int sc_main(int argc, char **argv) {
 	(void)argc;
@@ -20,26 +21,27 @@ int sc_main(int argc, char **argv) {
 	*/
 
 	Generator gen("Generator1");
-  Memory mem("Memory", 0x100);
+  Memory mem("Memory", 0x15400);
 	Bus bus("Bus");
+  LCDC lcdc("LCDC", sc_core::sc_time(1.0 / 25, sc_core::SC_SEC));
+
+  sc_core::sc_signal<bool> display_intr;
 
   /* port mapping */
-	bus.map(mem.socket, 0x10000000, 0x100000FF+1);
+	bus.map(mem.socket, 0x10000000, 0x15400);
+  bus.map(lcdc.target_socket, 0x20000000, 3*4);
 
 	/* connect components to the bus */
 	gen.socket.bind(bus.target);
 	bus.initiator.bind(mem.socket);
+  bus.initiator.bind(lcdc.target_socket);
+  lcdc.initiator_socket.bind(bus.target);
+
+  lcdc.display_intr(display_intr);
+  gen.get_intr(display_intr);
 
 	/* and start simulation */
 	sc_core::sc_start();
-
-
-  ensitlm::data_t d=10;
-  for (ensitlm::addr_t a=0; a < 0x100; a+=4) {
-    if (mem.read(a, d) != tlm::TLM_OK_RESPONSE)
-      std::cout << "ERROR at " << a << std::endl;
-  }
-
 
 	return 0;
 }

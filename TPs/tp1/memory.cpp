@@ -27,7 +27,9 @@ tlm::tlm_response_status Memory::write(const ensitlm::addr_t &a,
     return tlm::TLM_ADDRESS_ERROR_RESPONSE;
 
   storage[a/4] = d;
+#if DEBUG
   std::cout << name() << ": write " << std::hex << a << " " << std::dec << d << endl;
+#endif
 	return tlm::TLM_OK_RESPONSE;
 }
 
@@ -37,6 +39,8 @@ tlm::tlm_response_status Memory::read(const ensitlm::addr_t &a,
     return tlm::TLM_ADDRESS_ERROR_RESPONSE;
 
   d = storage[a/4];
+#if DEBUG
   std::cout << name() << ": read " << std::hex << a << " " << std::dec << d << endl;
+#endif
 	return tlm::TLM_OK_RESPONSE;
 }
