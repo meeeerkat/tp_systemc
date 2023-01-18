@@ -32,9 +32,17 @@ RV32Wrapper::RV32Wrapper(sc_core::sc_module_name name)
 	SC_THREAD(run_iss);
 	/* The method that is required to forward the interrupts from the SystemC
 	 * environment to the ISS needs to be declared here */
+
+    interrupt = false;
+    SC_METHOD(interrupt_handler);
+    sensitive << irq.pos();
 }
 
 /* IRQ forwarding method to be defined here */
+void RV32Wrapper::interrupt_handler() {
+    interrupt = true;
+    m_iss.setIrq(true);
+}
 
 void RV32Wrapper::exec_data_request(enum iss_t::DataOperationType mem_type,
                                   uint32_t mem_addr, uint32_t mem_wdata, uint32_t mem_be)
@@ -48,7 +56,8 @@ void RV32Wrapper::exec_data_request(enum iss_t::DataOperationType mem_type,
 	switch (mem_type) {
 		case iss_t::DATA_READ:
 			/* The ISS requested a data read (content of mem_addr into localbuf). */
-			abort(); // TODO
+            socket.read(uint32_le_to_machine(mem_addr), localbuf);
+            localbuf = uint32_machine_to_le(localbuf);
 #ifdef DEBUG
 			std::cout << hex << "read    " << setw(10) << localbuf
 						 << " at address " << mem_addr << std::endl;
@@ -57,7 +66,8 @@ void RV32Wrapper::exec_data_request(enum iss_t::DataOperationType mem_type,
 			break;
 		case iss_t::DATA_WRITE:
 			/* The ISS requested a data write (mem_wdata at mem_addr). */
-			abort(); // TODO
+            mem_wdata = uint32_le_to_machine(mem_wdata);
+            socket.write(uint32_le_to_machine(mem_addr), mem_wdata);
 #ifdef DEBUG
 			std::cout << hex << "wrote   " << setw(10) << mem_wdata
 						 << " at address " << mem_addr << std::endl;
@@ -91,8 +101,9 @@ void RV32Wrapper::run_iss(void)
 			if (ins_asked) {
 				/* The ISS requested an instruction.
 				 * We have to do the instruction fetch by reading from memory. */
-				abort(); // TODO
 				uint32_t localbuf;
+                socket.read(uint32_le_to_machine(ins_addr), localbuf);
+                localbuf = uint32_machine_to_le(localbuf);
 				m_iss.setInstruction(0, localbuf);
 			}
 
@@ -106,6 +117,12 @@ void RV32Wrapper::run_iss(void)
 			if (mem_asked) {
 				exec_data_request(mem_type, mem_addr, mem_wdata, mem_be);
 			}
+
+            if (interrupt) {
+                inst_count ++;
+                if (inst_count == 5)
+                    m_iss.setIrq(false);
+            }
 			m_iss.step();
 
 			/* IRQ handling to be done */

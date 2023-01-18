@@ -33,17 +33,17 @@ sections.txt: $(EXEC)
 	$(TARGET_READELF) -S $< > $@
 
 
-$(EXEC): $(OBJS)
+$(EXEC): $(OBJS) ldscript
 # TODO: use $(TARGET_LD), and use the -T option to point to linker script ldscript
 	$(TARGET_LD) -T ldscript $(OBJS) -o $@
 
 main.o: ../main.c ../../address_map.h # TODO: dependencies
 # TODO: compile with target C compiler
-	$(TARGET_CC) $(INCLUDE) -g -c $< -o $@
+	$(TARGET_CC) $(INCLUDE) -c $< -o $@
 	
 trap.o: trap.c ../../address_map.h # TODO: dependencies
 # TODO: compile with target C compiler
-	$(TARGET_CC) $(INCLUDE) -g -c $< -o $@
+	$(TARGET_CC) $(INCLUDE) -c $< -o $@
 
 
 %.o: %.s

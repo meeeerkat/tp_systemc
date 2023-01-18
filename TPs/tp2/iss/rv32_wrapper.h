@@ -11,6 +11,7 @@ struct RV32Wrapper : sc_core::sc_module {
 	ensitlm::initiator_socket<RV32Wrapper> socket;
 	sc_core::sc_in<bool> irq;
 
+
 	void run_iss(void);
 	/* Add stuff relative to irq handling */
 
@@ -20,6 +21,9 @@ private:
 	typedef soclib::common::Rv32Iss iss_t;
 	void exec_data_request(enum iss_t::DataOperationType mem_type,
 	                       uint32_t mem_addr, uint32_t mem_wdata, uint32_t mem_be);
+
+    bool interrupt;
+    void interrupt_handler();
 	iss_t m_iss;
 };
 
