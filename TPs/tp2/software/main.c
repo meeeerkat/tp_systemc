@@ -1171,7 +1171,10 @@ int main(void)
 			if (TEST_BIT(d, GPIO_BTN0)) {
 				break;
 			}
+
+            hal_cpu_relax();
 		}
+        hal_cpu_relax();
 	}
 
 	return 0;
