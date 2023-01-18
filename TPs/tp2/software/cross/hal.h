@@ -21,10 +21,10 @@
 } while (0)
 
 /* TODO: implement HAL primitives for cross-compilation */
-#define hal_read32(a)      abort()
-#define hal_write32(a, d)  abort()
-#define hal_wait_for_irq() abort()
-#define hal_cpu_relax()    abort()
+#define hal_read32(a)      *((unsigned int*) a)
+#define hal_write32(a, d)  *((unsigned int*) a) = d
+#define hal_wait_for_irq() do {} while(0)
+#define hal_cpu_relax()    do {} while(0)
 
 static inline void enable_interrupts(void) {
 	__asm("li    t0, 0x8\n"
